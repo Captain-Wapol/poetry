@@ -3,16 +3,23 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:audioplayers/audio_cache.dart';
+import 'package:http/http.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum PlayerState { stopped, playing, paused }
 
 class PlayerWidget extends StatefulWidget {
   final String url;
+  final String id;
   final bool isLocal;
   final PlayerMode mode;
 
   PlayerWidget(
       {@required this.url,
+      this.id="123456789",
       this.isLocal = false,
       this.mode = PlayerMode.MEDIA_PLAYER});
 
@@ -128,15 +135,29 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     });
   }
 
+  Future _loadFile(String url,String id) async {
+    final bytes = await readBytes(url);
+    final dir = await getApplicationDocumentsDirectory();
+    final file = new File('${dir.path}/' + id + 'audio.mp3');
+
+    await file.writeAsBytes(bytes);
+    if (await file.exists()) {
+        return file.path;
+
+    }
+  }
+
   Future<int> _play() async {
+    
     final playPosition = (_position != null &&
             _duration != null &&
             _position.inMilliseconds > 0 &&
             _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
-    final result =
-        await _audioPlayer.play(url, isLocal: isLocal, position: playPosition);
+        var localurl = await _loadFile(url,"1234567");
+    //final result = await _audioPlayer.play(url, isLocal: isLocal, position: playPosition);
+    final result = await _audioPlayer.play(localurl, isLocal: true, position: playPosition);
     if (result == 1) setState(() => _playerState = PlayerState.playing);
     return result;
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poetry/widgets/poetryDetail.dart';
 
 class SearchPoetryWidget extends StatefulWidget {
   final List<dynamic> _dataList;
@@ -11,11 +12,6 @@ class SearchPoetryState extends State<SearchPoetryWidget> {
   List<dynamic> _dataList;
   List<dynamic> _searchList;
   SearchPoetryState(this._dataList);
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +31,13 @@ class SearchPoetryState extends State<SearchPoetryWidget> {
       body: _createSearchPoetry(context),
     );
   }
+  
+  void _itemOntab(String title, String id, String audio) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return PoetryDetailWidget(title, id, audio);
+      }));
+    }
 
   Widget _createSearchPoetry(BuildContext context) {
     return Column(
@@ -59,7 +62,6 @@ class SearchPoetryState extends State<SearchPoetryWidget> {
                   contentPadding: EdgeInsets.all(10.0),
                   fillColor: Colors.black),
               onChanged: (String word) {
-                print(word);
                 _search(word);
               },
             )),
@@ -70,7 +72,7 @@ class SearchPoetryState extends State<SearchPoetryWidget> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {
-                    //_itemOntab(dataList[index]["title"], dataList[index]["id"],  dataList[index]["audio"]);
+                    _itemOntab(_searchList[index]["title"], _searchList[index]["id"],  _searchList[index]["audio"]);
                   },
                   child: Container(
                       padding: EdgeInsets.all(10.0),
@@ -121,7 +123,6 @@ class SearchPoetryState extends State<SearchPoetryWidget> {
       }
     }
     setState(() {
-      print(tmpList);
       _searchList = tmpList;
     });
   }

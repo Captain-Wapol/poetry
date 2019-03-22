@@ -94,7 +94,7 @@ class _PoetryDetailState extends State<_DetailWidget> {
                   style: TextStyle(
                       color: Colors.black87, fontSize: 20, height: 2.0)),
             ),
-            PlayerWidget(url: this._audio),
+            PlayerWidget(url: this._audio,id: this._id),
             Padding(
               padding: EdgeInsets.only(top: 24),
               child: MaterialButton(
