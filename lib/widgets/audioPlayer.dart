@@ -88,8 +88,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               color: Colors.deepOrange[300]),
           new Text(
                 _position != null
-                    ? '${_positionText ?? ''} / ${_durationText ?? ''}'
-                    : _duration != null ? _durationText : '0:00:00 / 0:00:00',
+                    ? '${_positionText ?? ''} / ${_durationText ?? ''}': '0:00:00 / 0:00:00',
                 style: new TextStyle(fontSize: 24.0),
               ),
         ],
