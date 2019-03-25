@@ -82,9 +82,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           new IconButton(
-              onPressed: _isPlaying ? null : () => _play(),
+              onPressed: _isPlaying ? () => _pause() : () => _play(),
               iconSize: 64.0,
-              icon: new Icon(Icons.play_arrow),
+              icon: _isPlaying ? new Icon(Icons.pause): new Icon(Icons.play_arrow),
               color: Colors.deepOrange[300]),
           new Text(
                 _position != null
