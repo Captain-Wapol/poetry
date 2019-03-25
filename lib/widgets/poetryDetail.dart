@@ -13,12 +13,7 @@ class PoetryDetailWidget extends StatelessWidget {
   PoetryDetailWidget(this._title, this._id, this._audio);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text(_title),
           leading: IconButton(
@@ -30,8 +25,7 @@ class PoetryDetailWidget extends StatelessWidget {
           centerTitle: true,
         ),
         body: new _DetailWidget(_id, this._audio),
-      ),
-    );
+      );
   }
 }
 
