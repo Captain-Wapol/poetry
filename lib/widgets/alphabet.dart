@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:poetry/utils.dart';
+import 'package:poetry/widgets/alphabetDetail.dart';
 
 class AlphabetWidget extends StatefulWidget {
   @override
@@ -29,7 +30,15 @@ class AlphabetState extends State<AlphabetWidget> {
   Widget _createListView(BuildContext context, Map<String, dynamic> data) {
     List<Widget> words = new List();
     for (var i = 0; i < data["words"].length; i++) {
-      words.add(Container(
+      words.add(InkWell( 
+        onTap: (){
+          Navigator.push(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    print(data["words"][i]["word"]);
+                return AlphabetDetailWidget(data["words"][i]["word"]);
+              }));
+        },
+        child:Container(
         width: 70.0,
         height: 70.0,
         alignment: Alignment(0.0, 0.0),
@@ -50,7 +59,7 @@ class AlphabetState extends State<AlphabetWidget> {
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800),
         ),
-      ));
+      )));
     }
 
     return Container(
