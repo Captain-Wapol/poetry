@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:poetry/utils.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:poetry/widgets/audioPlayer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+
+enum PlayerState { stopped, playing, paused }
 
 class AlphabetDetailWidget extends StatelessWidget {
   final String _word;
@@ -35,7 +37,6 @@ class _DetailWidget extends StatefulWidget {
 }
 
 class _AlphabetDetailState extends State<_DetailWidget> {
-  AudioPlayer _audioPlayer = new AudioPlayer();
   final String _word;
   bool hasRead = false;
   _AlphabetDetailState(this._word);
@@ -59,6 +60,13 @@ class _AlphabetDetailState extends State<_DetailWidget> {
 
   Widget _createListView(BuildContext context, Map<String, dynamic> data) {
     final videoPlayerController = VideoPlayerController.network(data["mp4url"]);
+    final _playerState = PlayerState.paused;
+    final chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      aspectRatio: 3 / 2,
+      autoPlay: true,
+      looping: true,
+    );
     print(data["imageurl"]);
     return SingleChildScrollView(
         padding: EdgeInsets.only(top: 14),
@@ -68,12 +76,19 @@ class _AlphabetDetailState extends State<_DetailWidget> {
             Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
               MaterialButton(
                 child: Container(
-                  padding: EdgeInsets.all(15),
+                    width: 200,
+                    height: 200,
+                    alignment: Alignment.center,
+                    //padding: EdgeInsets.all(15),
                     decoration: new BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.all(const Radius.circular(15)),
-                      gradient:RadialGradient(colors: [Colors.deepOrange[50], Colors.deepOrange[100], Colors.deepOrange[200]],radius: 2)
-                    ),
+                        border: Border.all(color: Colors.grey),
+                        borderRadius:
+                            BorderRadius.all(const Radius.circular(15)),
+                        gradient: RadialGradient(colors: [
+                          Colors.deepOrange[50],
+                          Colors.deepOrange[100],
+                          Colors.deepOrange[200]
+                        ], radius: 2)),
                     child: Text(
                       _word,
                       style: TextStyle(fontSize: 120),
@@ -100,13 +115,18 @@ class _AlphabetDetailState extends State<_DetailWidget> {
                       });
                 },
               ),
-              IconButton(
-                icon: Icon(Icons.record_voice_over),
-                onPressed: () => {              
-                    _audioPlayer.play(data["mp3url"], isLocal: false)
-                },
-              )
-            ])
+              // IconButton(
+              //   icon: Icon(Icons.record_voice_over),
+              //   onPressed: () => {},
+              // )
+            ]),
+            PlayerWidget(
+              url: data["mp3url"],
+              showTime: false,
+            ),
+            Chewie(
+              controller: chewieController,
+            )
           ],
         ));
   }

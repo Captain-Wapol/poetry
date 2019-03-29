@@ -15,23 +15,26 @@ class PlayerWidget extends StatefulWidget {
   final String url;
   final String id;
   final bool isLocal;
+  final bool showTime;
   final PlayerMode mode;
 
   PlayerWidget(
       {@required this.url,
-      this.id="123456789",
+      this.id = "123456789",
       this.isLocal = false,
-      this.mode = PlayerMode.MEDIA_PLAYER});
+      this.mode = PlayerMode.MEDIA_PLAYER,
+      this.showTime = true});
 
   @override
   State<StatefulWidget> createState() {
-    return new _PlayerWidgetState(url, isLocal, mode);
+    return new _PlayerWidgetState(url, isLocal, mode, showTime);
   }
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
   String url;
   bool isLocal;
+  bool showTime;
   PlayerMode mode;
 
   AudioPlayer _audioPlayer;
@@ -51,7 +54,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   get _durationText => _duration?.toString()?.split('.')?.first ?? '';
   get _positionText => _position?.toString()?.split('.')?.first ?? '';
 
-  _PlayerWidgetState(this.url, this.isLocal, this.mode);
+  _PlayerWidgetState(this.url, this.isLocal, this.mode, this.showTime);
 
   @override
   void initState() {
@@ -72,26 +75,32 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> children = [
+      new IconButton(
+          onPressed: _isPlaying ? () => _pause() : () => _play(),
+          iconSize: 64.0,
+          icon: _isPlaying ? new Icon(Icons.pause) : new Icon(Icons.play_arrow),
+          color: Colors.deepOrange[300])
+    ];
+    if (showTime)
+      children.add(new Text(
+        _position != null
+            ? '${_positionText ?? ''} / ${_durationText ?? ''}'
+            : '0:00:00 / 0:00:00',
+        style: new TextStyle(fontSize: 24.0),
+      ));
     return Container(
+      alignment: Alignment.center,
       padding: EdgeInsets.only(right: 24),
       decoration: BoxDecoration(
           color: Colors.grey[200],
           border: Border.all(color: Colors.grey[300], width: 1),
           borderRadius: BorderRadius.all(Radius.circular(10))),
       child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
-        children: [
-          new IconButton(
-              onPressed: _isPlaying ? () => _pause() : () => _play(),
-              iconSize: 64.0,
-              icon: _isPlaying ? new Icon(Icons.pause): new Icon(Icons.play_arrow),
-              color: Colors.deepOrange[300]),
-          new Text(
-                _position != null
-                    ? '${_positionText ?? ''} / ${_durationText ?? ''}': '0:00:00 / 0:00:00',
-                style: new TextStyle(fontSize: 24.0),
-              ),
-        ],
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
       ),
     );
   }
@@ -134,29 +143,28 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     });
   }
 
-  Future _loadFile(String url,String id) async {
+  Future _loadFile(String url, String id) async {
     final bytes = await readBytes(url);
     final dir = await getApplicationDocumentsDirectory();
     final file = new File('${dir.path}/' + id + 'audio.mp3');
 
     await file.writeAsBytes(bytes);
     if (await file.exists()) {
-        return file.path;
-
+      return file.path;
     }
   }
 
   Future<int> _play() async {
-    
     final playPosition = (_position != null &&
             _duration != null &&
             _position.inMilliseconds > 0 &&
             _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
-        var localurl = await _loadFile(url,"1234567");
+    var localurl = await _loadFile(url, "1234567");
     //final result = await _audioPlayer.play(url, isLocal: isLocal, position: playPosition);
-    final result = await _audioPlayer.play(localurl, isLocal: true, position: playPosition);
+    final result = await _audioPlayer.play(localurl,
+        isLocal: true, position: playPosition);
     if (result == 1) setState(() => _playerState = PlayerState.playing);
     return result;
   }
