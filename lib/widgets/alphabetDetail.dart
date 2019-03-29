@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:poetry/utils.dart';
 import 'package:poetry/widgets/audioPlayer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
+import 'package:poetry/widgets/videoPlayer.dart';
 import 'package:video_player/video_player.dart';
-import 'package:chewie/chewie.dart';
 
 enum PlayerState { stopped, playing, paused }
 
@@ -59,15 +59,7 @@ class _AlphabetDetailState extends State<_DetailWidget> {
   }
 
   Widget _createListView(BuildContext context, Map<String, dynamic> data) {
-    final videoPlayerController = VideoPlayerController.network(data["mp4url"]);
-    final _playerState = PlayerState.paused;
-    final chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      aspectRatio: 3 / 2,
-      autoPlay: true,
-      looping: true,
-    );
-    print(data["imageurl"]);
+
     return SingleChildScrollView(
         padding: EdgeInsets.only(top: 14),
         child: Column(
@@ -124,9 +116,11 @@ class _AlphabetDetailState extends State<_DetailWidget> {
               url: data["mp3url"],
               showTime: false,
             ),
-            Chewie(
-              controller: chewieController,
-            )
+            NetworkPlayerLifeCycle(
+                    data["mp4url"],
+                    (BuildContext context, VideoPlayerController controller) =>
+                        AspectRatioVideo(controller),
+                  )
           ],
         ));
   }
