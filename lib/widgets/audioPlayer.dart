@@ -15,7 +15,7 @@ class PlayerWidget extends StatefulWidget {
   final String url;
   final String id;
   final bool isLocal;
-  final bool showTime;
+  final bool fullControl;
   final PlayerMode mode;
 
   PlayerWidget(
@@ -23,18 +23,18 @@ class PlayerWidget extends StatefulWidget {
       this.id = "123456789",
       this.isLocal = false,
       this.mode = PlayerMode.MEDIA_PLAYER,
-      this.showTime = true});
+      this.fullControl = true});
 
   @override
   State<StatefulWidget> createState() {
-    return new _PlayerWidgetState(url, isLocal, mode, showTime);
+    return new _PlayerWidgetState(url, isLocal, mode, fullControl);
   }
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
   String url;
   bool isLocal;
-  bool showTime;
+  bool fullControl;
   PlayerMode mode;
 
   AudioPlayer _audioPlayer;
@@ -54,7 +54,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   get _durationText => _duration?.toString()?.split('.')?.first ?? '';
   get _positionText => _position?.toString()?.split('.')?.first ?? '';
 
-  _PlayerWidgetState(this.url, this.isLocal, this.mode, this.showTime);
+  _PlayerWidgetState(this.url, this.isLocal, this.mode, this.fullControl);
 
   @override
   void initState() {
@@ -75,34 +75,43 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> children = [
-      new IconButton(
-          onPressed: _isPlaying ? () => _pause() : () => _play(),
-          iconSize: 64.0,
-          icon: _isPlaying ? new Icon(Icons.pause) : new Icon(Icons.play_arrow),
-          color: Colors.deepOrange[300])
-    ];
-    if (showTime)
-      children.add(new Text(
-        _position != null
-            ? '${_positionText ?? ''} / ${_durationText ?? ''}'
-            : '0:00:00 / 0:00:00',
-        style: new TextStyle(fontSize: 24.0),
-      ));
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(right: 24),
-      decoration: BoxDecoration(
-          color: Colors.grey[200],
-          border: Border.all(color: Colors.grey[300], width: 1),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: new Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: children,
-      ),
-    );
+    if (fullControl) {
+      return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(right: 24),
+        decoration: BoxDecoration(
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.grey[300], width: 1),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            new IconButton(
+                onPressed: _isPlaying ? () => _pause() : () => _play(),
+                iconSize: 64.0,
+                icon: _isPlaying
+                    ? new Icon(Icons.pause)
+                    : new Icon(Icons.play_arrow),
+                color: Colors.deepOrange[300]),
+            new Text(
+              _position != null
+                  ? '${_positionText ?? ''} / ${_durationText ?? ''}'
+                  : '0:00:00 / 0:00:00',
+              style: new TextStyle(fontSize: 24.0),
+            )
+          ],
+        ),
+      );
+    } else {
+      return IconButton(
+        padding: EdgeInsets.all(0),
+              onPressed: _isPlaying ? () => _pause() : () => _play(),
+              iconSize: 24.0,
+              icon: new Icon(Icons.audiotrack),
+              color: Colors.deepOrange[300]);
+    }
   }
 
   void _initAudioPlayer() {

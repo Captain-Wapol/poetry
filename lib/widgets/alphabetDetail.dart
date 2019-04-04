@@ -39,10 +39,18 @@ class _DetailWidget extends StatefulWidget {
 class _AlphabetDetailState extends State<_DetailWidget> {
   final String _word;
   bool hasRead = false;
+  VideoPlayerController _controller;
+
   _AlphabetDetailState(this._word);
   @override
   void initState() {
     super.initState();
+    _controller = VideoPlayerController.network(
+        'http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4')
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
   }
 
   @override
@@ -91,7 +99,7 @@ class _AlphabetDetailState extends State<_DetailWidget> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           actions: <Widget>[
-                            new FlatButton(
+                            new FlatButton( 
                               child: new Text(
                                 '关闭',
                                 style: TextStyle(
@@ -107,20 +115,30 @@ class _AlphabetDetailState extends State<_DetailWidget> {
                       });
                 },
               ),
+              
+            PlayerWidget(
+              url: data["mp3url"],
+              fullControl: false,
+            ),
               // IconButton(
               //   icon: Icon(Icons.record_voice_over),
               //   onPressed: () => {},
               // )
             ]),
-            PlayerWidget(
-              url: data["mp3url"],
-              showTime: false,
-            ),
-            NetworkPlayerLifeCycle(
-                    data["mp4url"],
-                    (BuildContext context, VideoPlayerController controller) =>
-                        AspectRatioVideo(controller),
-                  )
+            VideoPlayerWidgt(data["mp4url"])
+            // Center(
+            //   child: _controller.value.initialized
+            //       ? AspectRatio(
+            //           aspectRatio: _controller.value.aspectRatio,
+            //           child: VideoPlayer(_controller),
+            //         )
+            //       : Container(),
+            // )
+            // NetworkPlayerLifeCycle(
+            //         data["mp4url"],
+            //         (BuildContext context, VideoPlayerController controller) =>
+            //             AspectRatioVideo(controller),
+            //       )
           ],
         ));
   }
