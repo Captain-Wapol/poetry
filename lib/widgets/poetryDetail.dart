@@ -89,6 +89,20 @@ class _PoetryDetailState extends State<_DetailWidget> {
                       color: Colors.black87, fontSize: 20, height: 2.0)),
             ),
             PlayerWidget(url: this._audio,id: this._id),
+
+            //注释
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.only(top: 14),
+              child: Text(data["note"],
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                    height: 1.5,
+                  )),
+            ),
+
             Padding(
               padding: EdgeInsets.only(top: 24),
               child: MaterialButton(
@@ -106,19 +120,6 @@ class _PoetryDetailState extends State<_DetailWidget> {
                 },
               ),
             ),
-
-            //注释
-            Container(
-              alignment: Alignment.center,
-              //padding: EdgeInsets.only(top: 14),
-              child: Text(data["note"],
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                    height: 1.5,
-                  )),
-            )
           ],
         ));
   }
